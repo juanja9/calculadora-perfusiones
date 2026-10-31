@@ -69,6 +69,7 @@ input:focus{outline:none}
 .tag.mod{background:var(--warn-bg);color:var(--warn)}
 .linkbtn{appearance:none;border:0;background:none;color:var(--accent);font:inherit;font-size:14px;font-weight:600;text-decoration:underline;padding:0;cursor:pointer}
 .prep{font-size:13px;color:var(--muted);margin:0}
+.werr{color:var(--bad)}
 .band .tag.ok{background:var(--accent);color:var(--accent-ink)}
 
 /* Modo */
@@ -158,7 +159,7 @@ footer b{color:var(--fg);font-weight:600}
 
   <section id="weightSec" aria-labelledby="l-w">
     <div class="field">
-      <label for="weight" id="l-w">Peso real</label>
+      <label for="weight" id="l-w">Peso real <span id="wErr" class="werr" hidden>· máximo 150 kg</span></label>
       <div class="inp"><input id="weight" inputmode="decimal" autocomplete="off" value="70"><span>kg</span></div>
     </div>
   </section>
@@ -211,6 +212,7 @@ const DRUGS = [
    start:0.05, errorAbove:2, rows:[0.05,0.1,0.2,0.3,0.5,0.75,1],
    rowNotes:{0.05:'inicio',0.3:'valorar vasopresina'},
    statusFn:d=> d>2 ? ['bad','Dosis muy por encima de lo habitual: revisa unidades y dilución.'] :
+               d>1 ? ['warn','Por encima de 1 µg/kg/min: dosis alta, revisa la estrategia multimodal.'] :
                d>=0.3 ? ['info','A partir de 0,3 µg/kg/min el protocolo indica añadir vasopresina.'] :
                ['info','Sin dosis máxima en el protocolo. Inicio 0,05 µg/kg/min.'],
    notes:['Vía central; solo transitoriamente por vía periférica de calibre adecuado.','Inicio 0,05 µg/kg/min; escalar siguiendo la estrategia multimodal para evitar dosis altas de catecolaminas.','Riesgo de isquemia distal y necrosis por extravasación.']},
@@ -228,6 +230,7 @@ const DRUGS = [
    prep:'2 mg (2 viales) + 48 ml de SSF.',
    rows:[0.01,0.02,0.05,0.1,0.2,0.3,0.5], rowNotes:{0.01:'inicio'},
    statusFn:d=> d>2 ? ['bad','Dosis muy por encima de lo habitual: revisa unidades y dilución.'] :
+               d>1 ? ['warn','Por encima de 1 µg/kg/min: dosis alta.'] :
                ['info','Sin dosis máxima en el protocolo. Inicio 0,01 µg/kg/min.'],
    notes:['Inicio 0,01 µg/kg/min, ajustando según respuesta.','Eleva el lactato y la glucemia; taquiarritmias y aumento del consumo miocárdico de O₂.']},
   {id:'at2', name:'Angiotensina II', short:'AT-II', unit:'ng/kg/min', per:'kgmin', amountUnit:'mg', factor:1e6, concUnit:'ng/ml',
@@ -278,7 +281,9 @@ function conc(){ // en unidades de dosis por ml
   return a*drug.factor/v;
 }
 function defaultConc(d){ return d.amount*d.factor/d.volume; }
+const MAX_KG = 150;
 function needsWeight(){ return drug.per!=='min'; }
+function weightOk(kg){ return !needsWeight() || (kg>0 && kg<=MAX_KG); }
 function doseToRate(dose, kg, c){ // ml/h
   if(drug.per==='kgmin') return dose*kg*60/c;
   if(drug.per==='min') return dose*60/c;
@@ -324,7 +329,7 @@ function update(){
 
   // Concentración
   const isDefault = isFinite(c) && Math.abs(c-dc)/dc < 1e-9;
-  const wOk0 = !needsWeight() || kg>0;
+  const wOk0 = weightOk(kg);
   const a = parse($('amount').value), vol0 = parse($('volume').value);
   const cTxt = isFinite(c) ? `${fmt(c,3)} ${drug.concUnit}` : '—';
   const tag = isFinite(c) ? (isDefault ? '<span class="tag ok">Acorde al protocolo</span>' : '<span class="tag mod">Dilución modificada</span>') : '';
@@ -333,8 +338,9 @@ function update(){
   $('conc').innerHTML = `Concentración <b>${cTxt}</b>` + (isFinite(c) && !isDefault ? ` <span class="tag mod">Dilución modificada</span><button type="button" class="linkbtn" id="resetDil">Volver a la del protocolo</button>` : '');
   const rb = $('resetDil'); if(rb) rb.addEventListener('click',()=>{ $('amount').value=fmtIn(drug.amount); $('volume').value=fmtIn(drug.volume); update(); });
   const ready = isFinite(c) && wOk0;
+  $('wErr').hidden = !(needsWeight() && kg>MAX_KG);
   $('go').disabled = !ready;
-  $('go').textContent = ready ? 'Calcular' : (!isFinite(c) ? 'Completa la dilución' : 'Introduce el peso');
+  $('go').textContent = ready ? 'Calcular' : (!isFinite(c) ? 'Completa la dilución' : kg>MAX_KG ? 'Peso máximo 150 kg' : 'Introduce el peso');
   $('band').className = 'band' + (isFinite(c) && !isDefault ? ' mod' : '');
   $('band').innerHTML = `<div class="info"><b>${drug.name}</b><span>${cTxt} · ${wTxt}</span>${tag}</div><button type="button" id="back">Cambiar</button>`;
   $('back').addEventListener('click', ()=>show(1));
@@ -342,10 +348,10 @@ function update(){
 
   // Resultado
   const v = parse($('value').value);
-  const wOk = !needsWeight() || kg>0;
+  const wOk = weightOk(kg);
   const res = $('result');
   if(!isFinite(c) || !wOk || !(v>0)){
-    const miss = !isFinite(c) ? 'la dilución' : !wOk ? 'el peso' : (mode==='dose'?'la dosis':'la velocidad');
+    const miss = !isFinite(c) ? 'la dilución' : !wOk ? (kg>MAX_KG ? 'un peso válido (máximo 150 kg)' : 'el peso') : (mode==='dose'?'la dosis':'la velocidad');
     res.innerHTML = `<div class="empty">Falta ${miss} para calcular.</div>`;
   } else {
     let rate, dose;
@@ -378,7 +384,7 @@ function mathLine(dose, rate, kg, c){
 function renderTable(c, kg, wOk){
   const t = $('table');
   $('tabHint').textContent = needsWeight() ? (wOk ? fmt(kg,1)+' kg · '+(isFinite(c)?fmt(c,3)+' '+drug.concUnit:'') : '') : (isFinite(c)?fmt(c,3)+' '+drug.concUnit:'');
-  if(!isFinite(c) || !wOk){ t.innerHTML = '<tbody><tr><td>Completa la dilución y el peso.</td></tr></tbody>'; return; }
+  if(!isFinite(c) || !wOk){ t.innerHTML = '<tbody><tr><td>Completa la dilución y el peso (máximo 150 kg).</td></tr></tbody>'; return; }
   const cur = parse($('value').value);
   const curDose = mode==='dose' ? cur : rateToDose(cur,kg,c);
   t.innerHTML = `<thead><tr><th>Dosis <span class="u">(${drug.unit})</span></th><th>ml/h</th></tr></thead><tbody>` +
