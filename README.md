@@ -21,6 +21,6 @@ La dilución se puede modificar en la app, que lo señala como «Dilución modif
 
 ## Uso
 
-Página única (`index.html`) que funciona en el navegador del móvil o tablet. Peso real máximo: 150 kg.
+Página única (`index.html`) que funciona en el navegador del móvil o tablet. Peso real: aviso por encima de 150 kg y máximo 200 kg.
 
 Herramienta de apoyo; no sustituye la prescripción ni la doble comprobación. Solo adultos.
