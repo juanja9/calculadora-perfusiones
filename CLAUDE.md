@@ -4,7 +4,7 @@ Calculadora web de perfusiones de vasoactivos (ml/h) que acompaña al protocolo 
 
 ## Estructura
 
-- `index.html`: toda la app (HTML, CSS y JS en un solo archivo, sin dependencias ni build). Debe seguir siendo un único archivo autocontenido, usable en iPhone/iPad.
+- `index.html`: toda la app (HTML, CSS, JS y la tipografía Archivo incrustada en un solo archivo, sin dependencias, sin peticiones a servidores externos y sin build). Debe seguir siendo un único archivo autocontenido, usable en iPhone/iPad.
 - Los fármacos, diluciones, rangos y avisos están en el array `DRUGS`; las fórmulas en `doseToRate` y `rateToDose`.
 - `tests/pruebas.js`: prueba automática (valores de referencia, avisos, peso y vista móvil). GitHub la ejecuta en cada PR con `.github/workflows/pruebas.yml`. No forma parte de la app.
 - Se publica con GitHub Pages desde `main`: https://juanja9.github.io/calculadora-perfusiones/

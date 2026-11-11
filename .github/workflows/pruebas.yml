@@ -15,13 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Instalar el navegador de pruebas
-        run: |
-          npm install --no-save --no-package-lock playwright@1.63.0
-          npx playwright install --with-deps chromium
+      - name: Instalar la herramienta de pruebas
+        run: npm install --no-save --no-package-lock playwright@1.63.0
       - name: Probar la calculadora
+        # Usa el Chrome que ya trae la máquina de GitHub: no descarga ni instala nada más
         run: node tests/pruebas.js
+        env:
+          NAVEGADOR: chrome

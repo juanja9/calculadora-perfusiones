@@ -37,11 +37,14 @@ let comprobaciones = 0;
 function comprobar(ok, texto) { comprobaciones++; if (!ok) fallos.push(texto); }
 
 (async () => {
-  const navegador = await chromium.launch();
+  // En GitHub se usa el Chrome que ya trae la máquina (NAVEGADOR=chrome); en local, el de Playwright
+  const navegador = await chromium.launch(process.env.NAVEGADOR ? { channel: process.env.NAVEGADOR } : {});
   for (const tema of ['light', 'dark']) {
     const ctx = await navegador.newContext({ viewport: { width: 390, height: 844 }, colorScheme: tema });
     const p = await ctx.newPage();
     p.on('pageerror', e => fallos.push(`Error de la página (${tema}): ${e.message}`));
+    // La página no debe pedir nada a servidores externos
+    p.on('request', r => { if (/^https?:/.test(r.url())) fallos.push(`Petición externa (${tema}): ${r.url()}`); });
     await p.goto(URL_APP);
 
     const elegir = id => p.click(`#drugs button[data-id=${id}]`);
@@ -105,6 +108,7 @@ function comprobar(ok, texto) { comprobaciones++; if (!ok) fallos.push(texto); }
       comprobar(await q.$eval('#s1', e => !e.hidden), '«Cambiar» no vuelve a la primera pantalla al primer toque');
       await q.close();
     }
+    comprobar(await p.evaluate(() => document.fonts.ready.then(() => document.fonts.check('800 28px Archivo') && [...document.fonts].some(f => f.family.replace(/"/g, '') === 'Archivo' && f.status === 'loaded'))), `${tema}: la tipografía Archivo incrustada no se ha cargado`);
     comprobar(FARMACOS.length === await p.$$eval('#drugs button', b => b.length), `${tema}: ha cambiado el número de fármacos`);
     await ctx.close();
   }
