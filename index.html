@@ -160,7 +160,7 @@ footer b{color:var(--fg);font-weight:600}
   <section id="weightSec" aria-labelledby="l-w">
     <div class="field">
       <label for="weight" id="l-w">Peso real <span id="wErr" class="werr" hidden></span></label>
-      <div class="inp"><input id="weight" inputmode="decimal" autocomplete="off" value="70"><span>kg</span></div>
+      <div class="inp"><input id="weight" inputmode="decimal" autocomplete="off"><span>kg</span></div>
     </div>
   </section>
 
@@ -205,6 +205,7 @@ footer b{color:var(--fg);font-weight:600}
 <script>
 // unit: dosis; per: 'kgmin' (·kg·min⁻¹), 'min' (sin peso), 'kgh'
 // factor: unidades de dosis por unidad de "amount" (µg por mg = 1000, ng por mg = 1e6, mg por mg = 1, UI por UI = 1)
+// ownDilution: la dilución por defecto no figura en el protocolo
 const DRUGS = [
   {id:'na', name:'Noradrenalina', short:'NA', unit:'µg/kg/min', per:'kgmin', amountUnit:'mg', factor:1000, concUnit:'µg/ml',
    amount:5, volume:50, pres:'Vial 5 mg (base) / 10 ml', diluent:'SSF',
@@ -243,7 +244,7 @@ const DRUGS = [
                ['ok','Dentro del rango de mantenimiento (≤ 40 ng/kg/min). Inicio 20.'],
    notes:['Inicio 20 ng/kg/min; ajustar cada 5 min en incrementos de hasta 15 ng/kg/min.','Profilaxis de enfermedad tromboembólica venosa salvo contraindicación.','No recomendada en shock cardiogénico ni en otros shocks no distributivos.']},
   {id:'am', name:'Azul de metileno', short:'AM', unit:'mg/kg/h', per:'kgh', amountUnit:'mg', factor:1, concUnit:'mg/ml',
-   amount:100, volume:100, pres:'Ampolla 50 mg / 10 ml', diluent:'SG 5 %',
+   amount:100, volume:100, ownDilution:true, pres:'Ampolla 50 mg / 10 ml', diluent:'SG 5 %',
    prep:'100 mg (2 ampollas) en 100 ml de suero glucosado 5 % (el cloruro reduce su solubilidad).',
    rows:[0.25,0.5,0.75,1], rowNotes:{},
    statusFn:d=> d>2 ? ['bad','Dosis muy por encima del rango: revisa unidades (mg/kg/h).'] :
@@ -252,7 +253,7 @@ const DRUGS = [
                ['ok','Dentro del rango del protocolo (0,25–1 mg/kg/h).'],
    notes:['Perfusión de 0,25–1 mg/kg/h durante 24–72 h, tras bolo de 1–2 mg/kg.','No superar 7 mg/kg acumulados en todo el tratamiento.','Contraindicado en déficit de G6PD y con serotoninérgicos (ISRS, IRSNA, IMAO). Interfiere con la pulsioximetría.']},
   {id:'dob', name:'Dobutamina', short:'DOB', unit:'µg/kg/min', per:'kgmin', amountUnit:'mg', factor:1000, concUnit:'µg/ml',
-   amount:250, volume:50, pres:'Vial 250 mg / 20 ml', diluent:'SSF o SG 5 %',
+   amount:250, volume:50, ownDilution:true, pres:'Vial 250 mg / 20 ml', diluent:'SSF o SG 5 %',
    prep:'250 mg (1 vial) + 30 ml de SSF o SG 5 %. La dobutamina no figura en el protocolo; dilución estándar de jeringa.',
    rows:[2.5,5,7.5,10,15,20], rowNotes:{2.5:'inicio'},
    statusFn:d=> d>40 ? ['bad','Supera 40 µg/kg/min: revisa unidades y dilución.'] :
@@ -332,10 +333,10 @@ function update(){
   const wOk0 = weightOk(kg);
   const a = parse($('amount').value), vol0 = parse($('volume').value);
   const cTxt = isFinite(c) ? `${fmt(c,3)} ${drug.concUnit}` : '—';
-  const tag = isFinite(c) ? (isDefault ? '<span class="tag ok">Acorde al protocolo</span>' : '<span class="tag mod">Dilución modificada</span>') : '';
+  const tag = isFinite(c) ? (isDefault ? `<span class="tag ok">${drug.ownDilution ? 'Dilución por defecto' : 'Acorde al protocolo'}</span>` : '<span class="tag mod">Dilución modificada</span>') : '';
   const wTxt = needsWeight() ? (wOk0 ? fmt(kg,1)+' kg' : '—') : 'No depende del peso';
   $('conc').className = 'conc' + (isFinite(c) && !isDefault ? ' mod' : '');
-  $('conc').innerHTML = `Concentración <b>${cTxt}</b>` + (isFinite(c) && !isDefault ? ` <span class="tag mod">Dilución modificada</span><button type="button" class="linkbtn" id="resetDil">Volver a la del protocolo</button>` : '');
+  $('conc').innerHTML = `Concentración <b>${cTxt}</b>` + (isFinite(c) && !isDefault ? ` <span class="tag mod">Dilución modificada</span><button type="button" class="linkbtn" id="resetDil">${drug.ownDilution ? 'Volver a la dilución por defecto' : 'Volver a la del protocolo'}</button>` : '');
   const rb = $('resetDil'); if(rb) rb.addEventListener('click',()=>{ $('amount').value=fmtIn(drug.amount); $('volume').value=fmtIn(drug.volume); update(); });
   const ready = isFinite(c) && wOk0;
   const heavy = needsWeight() && kg>WARN_KG;
@@ -346,7 +347,7 @@ function update(){
   $('band').className = 'band' + (isFinite(c) && !isDefault ? ' mod' : '');
   $('band').innerHTML = `<div class="info"><b>${drug.name}</b><span>${cTxt} · ${wTxt}</span>${tag}</div><button type="button" id="back">Cambiar</button>`;
   $('back').addEventListener('click', ()=>show(1));
-  $('prep').textContent = 'Preparación del protocolo: ' + drug.prep;
+  $('prep').textContent = (drug.ownDilution ? 'Preparación por defecto: ' : 'Preparación del protocolo: ') + drug.prep;
 
   // Resultado
   const v = parse($('value').value);
@@ -358,7 +359,8 @@ function update(){
   } else {
     let rate, dose;
     if(mode==='dose'){ dose=v; rate=doseToRate(v,kg,c); } else { rate=v; dose=rateToDose(v,kg,c); }
-    const [st, msg] = drug.statusFn(dose);
+    // 6 cifras significativas: evita que restos de coma flotante (0,030000000000000002) crucen un umbral
+    const [st, msg] = drug.statusFn(parseFloat(dose.toPrecision(6)));
     const head = mode==='dose'
       ? `<span class="k">Programar la bomba a</span><div class="big">${fmt(rate,2)}<small>ml/h</small></div>`
       : `<span class="k">El paciente recibe</span><div class="big">${fmt(dose,3)}<small>${drug.unit}</small></div>`;
@@ -407,7 +409,9 @@ function show(n, fromHistory){
   window.scrollTo(0,0);
   if(!fromHistory){ try{ if(n===2) history.pushState({s:2},'','#calculo'); else if(history.state&&history.state.s===2) history.back(); }catch(e){} }
 }
-window.addEventListener('popstate', ()=>{ show(location.hash==='#calculo' && !$('go').disabled ? 2 : 1, true); });
+window.addEventListener('popstate', e=>{ show(e.state && e.state.s===2 && !$('go').disabled ? 2 : 1, true); });
+// Si la página se abre o recarga con #calculo, se empieza siempre en la primera pantalla
+try{ if(location.hash==='#calculo' || history.state) history.replaceState(null,'',location.pathname+location.search); }catch(e){}
 $('go').addEventListener('click', ()=>{ if(!$('go').disabled) show(2); });
 ['amount','volume','weight','value'].forEach(id=>$(id).addEventListener('input',update));
 $('m-dose').addEventListener('click',()=>setMode('dose'));

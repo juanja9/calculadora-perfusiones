@@ -23,7 +23,7 @@ Calculadora web de perfusiones de vasoactivos (ml/h) que acompaña al protocolo 
 
 ## Cómo probar antes de dar un cambio por terminado
 
-1. Tabla de 70 kg con las diluciones por defecto; debe dar: NA 0,1 µg/kg/min → 4,2 ml/h; VP 0,03 UI/min → 2,25 ml/h; ADR 0,1 µg/kg/min → 10,5 ml/h; AT-II 20 ng/kg/min → 8,4 ml/h; AM 1 mg/kg/h → 70 ml/h; DOB 5 µg/kg/min → 4,2 ml/h.
+1. El peso empieza vacío y «Calcular» queda bloqueado hasta escribirlo (salvo vasopresina, que no depende del peso). Tabla de 70 kg con las diluciones por defecto; debe dar: NA 0,1 µg/kg/min → 4,2 ml/h; VP 0,03 UI/min → 2,25 ml/h; ADR 0,1 µg/kg/min → 10,5 ml/h; AT-II 20 ng/kg/min → 8,4 ml/h; AM 1 mg/kg/h → 70 ml/h; DOB 5 µg/kg/min → 4,2 ml/h.
 2. Avisos: NA/ADR ámbar > 0,5 y rojo > 1 µg/kg/min; peso > 150 kg aviso rojo, > 200 kg bloquea.
 3. Vista móvil a 390 px sin desplazamiento horizontal, en modo claro y oscuro.
 
