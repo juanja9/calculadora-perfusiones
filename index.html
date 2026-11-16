@@ -129,7 +129,6 @@ footer b{color:var(--fg);font-weight:600}
 .screen{display:flex;flex-direction:column;gap:22px}
 /* En la pantalla de resultado la cabecera se reduce al título para dejar sitio al cálculo */
 body.calc header .eyebrow,body.calc header .sub{display:none}
-body.calc h1{font-size:20px}
 body.calc header{padding-bottom:8px}
 body.calc .wrap{padding-top:12px;gap:16px}
 @media (max-width:360px){.big{font-size:44px}.drugs button{font-size:13px}}
@@ -339,7 +338,7 @@ function setMode(m, keep){
   $('valueUnit').textContent = m==='dose' ? drug.unit : 'ml/h';
   const key = drug.id+'|'+m;
   if(values[key]!=null) $('value').value = values[key];
-  else $('value').value = m==='dose' ? fmtIn(drug.rows[drug.id==='at2'?1:0]) : '';
+  else $('value').value = ''; // la dosis empieza vacía, igual que el peso: nada se calcula sin escribirla
   update();
 }
 

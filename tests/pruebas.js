@@ -61,6 +61,12 @@ function comprobar(ok, texto) { comprobaciones++; if (!ok) fallos.push(texto); }
     comprobar(!(await boton()).bloqueado, `${tema}: la vasopresina pide peso`);
     await elegir('na');
 
+    // 1b. La dosis empieza vacía y no se muestra ningún ritmo hasta escribirla
+    await p.fill('#weight', '70'); await p.click('#go');
+    comprobar(await p.inputValue('#value') === '', `${tema}: la dosis no empieza vacía`);
+    comprobar(await p.$('#result .big') === null, `${tema}: se muestra un resultado sin haber escrito la dosis`);
+    await volver();
+
     // 2. Valores de referencia a 70 kg, sin desplazamiento horizontal
     await p.fill('#weight', '70');
     for (const [id, dosis, esperado] of REFERENCIA) {
