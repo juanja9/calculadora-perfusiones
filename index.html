@@ -39,12 +39,12 @@
 body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
 .wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 32px;display:flex;flex-direction:column;gap:22px}
 header{border-bottom:2px solid var(--rule);padding-bottom:12px;display:flex;flex-direction:column;gap:4px}
-.eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 h1{font-size:28px;line-height:1.1;font-weight:800;margin:0;letter-spacing:-.01em;text-wrap:balance}
 .sub{color:var(--muted);font-size:14px;margin:0}
 section{display:flex;flex-direction:column;gap:10px}
-.label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.label .hint{text-transform:none;letter-spacing:0;font-weight:500}
+.label{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.label .hint{text-transform:none;letter-spacing:0;font-weight:500;white-space:nowrap}
 
 /* Fármacos */
 .drugs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid var(--rule)}
@@ -52,7 +52,7 @@ section{display:flex;flex-direction:column;gap:10px}
 .drugs button:nth-child(3n){border-right:0}
 .drugs button:nth-child(n+4){border-bottom:0}
 .drugs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.drugs button small{display:block;font-weight:500;font-size:11px;opacity:.8;margin-top:2px}
+.drugs button small{display:block;font-weight:500;font-size:13px;opacity:.8;margin-top:2px}
 
 /* Campos */
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -66,7 +66,7 @@ input:focus{outline:none}
 .conc{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px;padding:10px 12px;background:var(--surface);border-left:0}
 .conc.mod{background:var(--warn-bg);color:var(--warn)}
 .conc b{font-variant-numeric:tabular-nums}
-.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px}
+.tag{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px}
 .tag.ok{background:var(--accent-soft);color:var(--ok)}
 .tag.mod{background:var(--warn-bg);color:var(--warn)}
 .linkbtn{appearance:none;border:0;background:none;color:var(--accent);font:inherit;font-size:14px;font-weight:600;text-decoration:underline;padding:0;cursor:pointer}
@@ -76,7 +76,7 @@ input:focus{outline:none}
 
 /* Modo */
 .tabs{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--rule)}
-.tabs button{appearance:none;border:0;background:var(--bg);color:var(--fg);font:inherit;font-size:15px;font-weight:600;padding:11px 6px;cursor:pointer}
+.tabs button{appearance:none;border:0;background:var(--bg);color:var(--fg);font:inherit;font-size:15px;font-weight:600;padding:11px 6px;min-height:44px;cursor:pointer}
 .tabs button+button{border-left:2px solid var(--rule)}
 .tabs button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 button:focus-visible{outline:3px solid var(--accent);outline-offset:2px;position:relative;z-index:1}
@@ -84,7 +84,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px;position
 /* Resultado */
 .result{border:2px solid var(--rule);display:flex;flex-direction:column}
 .result .main{padding:16px 14px 12px;display:flex;flex-direction:column;gap:2px}
-.result .k{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.result .k{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .big{font-size:52px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .big small{font-size:20px;font-weight:700;letter-spacing:0}
 .status{padding:10px 14px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:flex-start;border-top:2px solid var(--rule)}
@@ -99,19 +99,22 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px;position
 /* Tabla */
 .tablewrap{overflow-x:auto;border-top:2px solid var(--rule);border-bottom:2px solid var(--rule)}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
-th,td{text-align:right;padding:9px 10px;border-bottom:1px solid var(--hair);white-space:nowrap}
+th,td{text-align:right;padding:11px 10px;border-bottom:1px solid var(--hair);white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
-thead th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--rule)}
+thead th{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--rule)}
 tbody tr:last-child td{border-bottom:0}
 thead th .u{text-transform:none;letter-spacing:0}
-td .note{font-size:12px;color:var(--muted);font-weight:500;margin-left:6px}
+td .note{font-size:13px;color:var(--muted);font-weight:500;margin-left:6px}
 tbody tr[data-d]{cursor:pointer}
+tbody tr[data-d]:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+tbody tr[data-d]:active td{background:var(--surface)}
+@media (hover:hover){tbody tr[data-d]:not(.cur):hover td{background:var(--surface)}}
 tr.cur td{background:var(--accent-soft);font-weight:700}
 
 .notes{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14px}
 .notes li{padding-left:16px;position:relative}
 .notes li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:2px;background:var(--accent-2)}
-footer{border-top:2px solid var(--rule);padding-top:12px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+footer{border-top:2px solid var(--rule);padding-top:12px;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 footer b{color:var(--fg);font-weight:600}
 /* Verificación y navegación */
 .primary{appearance:none;border:2px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:inherit;font-size:18px;font-weight:700;padding:15px 12px;cursor:pointer;width:100%}
@@ -121,9 +124,14 @@ footer b{color:var(--fg);font-weight:600}
 .band .info b{font-size:16px}
 .band .info span{font-size:13px;font-variant-numeric:tabular-nums;opacity:.85}
 .band .tag{align-self:flex-start}
-.band button{appearance:none;border:2px solid var(--bg);background:transparent;color:var(--bg);font:inherit;font-size:14px;font-weight:700;padding:8px 12px;cursor:pointer;white-space:nowrap}
+.band button{appearance:none;border:2px solid var(--bg);background:transparent;color:var(--bg);font:inherit;font-size:14px;font-weight:700;padding:8px 12px;min-height:44px;cursor:pointer;white-space:nowrap}
 .band.mod{box-shadow:inset 0 -4px 0 var(--warn)}
 .screen{display:flex;flex-direction:column;gap:22px}
+/* En la pantalla de resultado la cabecera se reduce al título para dejar sitio al cálculo */
+body.calc header .eyebrow,body.calc header .sub{display:none}
+body.calc h1{font-size:20px}
+body.calc header{padding-bottom:8px}
+body.calc .wrap{padding-top:12px;gap:16px}
 @media (max-width:360px){.big{font-size:44px}.drugs button{font-size:13px}}
 /* Microanimaciones: solo con función y desactivadas con «reducir movimiento» */
 @keyframes flash{from{background:var(--accent-soft)}to{background:transparent}}
@@ -156,12 +164,12 @@ footer b{color:var(--fg);font-weight:600}
     <div class="label" id="l-dil">Dilución <span class="hint" id="presentacion"></span></div>
     <div class="fields">
       <div class="field">
-        <label for="amount" id="amountLabel">Fármaco</label>
-        <div class="inp"><input id="amount" inputmode="decimal" autocomplete="off"><span id="amountUnit">mg</span></div>
+        <label for="amount" id="amountLabel">Cantidad de fármaco</label>
+        <div class="inp"><input id="amount" inputmode="decimal" autocomplete="off" aria-describedby="amountUnit"><span id="amountUnit">mg</span></div>
       </div>
       <div class="field">
         <label for="volume">Volumen total</label>
-        <div class="inp"><input id="volume" inputmode="decimal" autocomplete="off"><span>ml</span></div>
+        <div class="inp"><input id="volume" inputmode="decimal" autocomplete="off" aria-describedby="volumeUnit"><span id="volumeUnit">ml</span></div>
       </div>
     </div>
     <div class="conc" id="conc"></div>
@@ -171,7 +179,7 @@ footer b{color:var(--fg);font-weight:600}
   <section id="weightSec" aria-labelledby="l-w">
     <div class="field">
       <label for="weight" id="l-w">Peso real <span id="wErr" class="werr" hidden></span></label>
-      <div class="inp"><input id="weight" inputmode="decimal" autocomplete="off"><span>kg</span></div>
+      <div class="inp"><input id="weight" inputmode="decimal" autocomplete="off" aria-describedby="weightUnit"><span id="weightUnit">kg</span></div>
     </div>
   </section>
 
@@ -188,7 +196,7 @@ footer b{color:var(--fg);font-weight:600}
     </div>
     <div class="field">
       <label for="value" id="valueLabel">Dosis</label>
-      <div class="inp"><input id="value" inputmode="decimal" autocomplete="off"><span id="valueUnit"></span></div>
+      <div class="inp"><input id="value" inputmode="decimal" autocomplete="off" aria-describedby="valueUnit"><span id="valueUnit"></span></div>
     </div>
   </section>
 
@@ -312,11 +320,12 @@ function renderDrugs(){
   $('drugs').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>selectDrug(b.dataset.id)));
 }
 function selectDrug(id){
+  // Al cambiar de fármaco se vuelve siempre a «Dosis → ml/h» para que la cifra grande sea un ritmo
+  if(drug.id!==id) mode = 'dose';
   drug = DRUGS.find(d=>d.id===id);
   $('amount').value = fmtIn(drug.amount);
   $('volume').value = fmtIn(drug.volume);
   renderDrugs();
-  $('amountLabel').textContent = drug.amountUnit==='UI' ? 'Fármaco (UI)' : 'Fármaco';
   $('amountUnit').textContent = drug.amountUnit;
   $('presentacion').textContent = drug.pres;
   $('weightSec').hidden = !needsWeight();
@@ -424,17 +433,24 @@ function renderTable(c, kg, wOk){
       const r = doseToRate(d,kg,c);
       const isCur = isFinite(curDose) && Math.abs(curDose-d) < 1e-9;
       const note = drug.rowNotes[d] ? `<span class="note">${drug.rowNotes[d]}</span>` : '';
-      return `<tr class="${isCur?'cur':''}" data-d="${fmtIn(d)}"><td>${fmt(d,3)}${note}</td><td>${fmt(r,2)}</td></tr>`;
+      return `<tr class="${isCur?'cur':''}" data-d="${fmtIn(d)}" tabindex="0" aria-label="Usar ${fmt(d,3)} ${drug.unit}: ${fmt(r,2)} ml/h"><td>${fmt(d,3)}${note}</td><td>${fmt(r,2)}</td></tr>`;
     }).join('') + '</tbody>';
-  t.querySelectorAll('tbody tr[data-d]').forEach(tr=>tr.addEventListener('click',()=>{
-    mode='dose'; values[drug.id+'|dose']=tr.dataset.d; setMode('dose');
-    $('result').scrollIntoView({behavior:'smooth',block:'center'});
-  }));
+  t.querySelectorAll('tbody tr[data-d]').forEach(tr=>{
+    const usar = ()=>{
+      mode='dose'; values[drug.id+'|dose']=tr.dataset.d; setMode('dose');
+      $('result').scrollIntoView({behavior:'smooth',block:'center'});
+    };
+    tr.addEventListener('click', usar);
+    tr.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); usar(); } });
+  });
 }
 
 function show(n, fromHistory){
   $('s1').hidden = n!==1; $('s2').hidden = n!==2;
+  document.body.classList.toggle('calc', n===2);
   window.scrollTo(0,0);
+  // Solo con ratón (ordenador): deja el cursor en la dosis. En el iPhone no, para no abrir el teclado sin pedirlo
+  if(n===2 && matchMedia('(hover:hover) and (pointer:fine)').matches){ $('value').focus(); $('value').select(); }
   if(!fromHistory){ try{ if(n===2) history.pushState({s:2},'','#calculo'); else if(history.state&&history.state.s===2) history.back(); }catch(e){} }
 }
 window.addEventListener('popstate', e=>{ show(e.state && e.state.s===2 && !$('go').disabled ? 2 : 1, true); });
@@ -442,6 +458,8 @@ window.addEventListener('popstate', e=>{ show(e.state && e.state.s===2 && !$('go
 try{ if(location.hash==='#calculo' || history.state) history.replaceState(null,'',location.pathname+location.search); }catch(e){}
 $('go').addEventListener('click', ()=>{ if(!$('go').disabled) show(2); });
 ['amount','volume','weight','value'].forEach(id=>$(id).addEventListener('input',update));
+// Intro en la dilución o el peso equivale a pulsar «Calcular»
+['amount','volume','weight'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter') $('go').click(); }));
 $('m-dose').addEventListener('click',()=>setMode('dose'));
 $('m-rate').addEventListener('click',()=>setMode('rate'));
 selectDrug('na');
