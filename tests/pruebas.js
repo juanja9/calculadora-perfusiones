@@ -51,7 +51,7 @@ function comprobar(ok, texto) { comprobaciones++; if (!ok) fallos.push(texto); }
     const volver = async () => { await p.click('#back'); await p.waitForFunction(() => !document.getElementById('s1').hidden); };
     const boton = () => p.$eval('#go', e => ({ texto: e.textContent, bloqueado: e.disabled }));
     const desborde = () => p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    const aviso = () => p.$eval('#result .status', e => e.className.replace('status', '').trim());
+    const aviso = () => p.$eval('#result .status', e => e.className.replace(/\b(status|enter)\b/g, '').trim());
     const cifra = () => p.$eval('#result .big', e => e.firstChild.textContent.trim());
 
     // 1. El peso empieza vacío y bloquea el cálculo, salvo en vasopresina
@@ -60,6 +60,12 @@ function comprobar(ok, texto) { comprobaciones++; if (!ok) fallos.push(texto); }
     await elegir('vp');
     comprobar(!(await boton()).bloqueado, `${tema}: la vasopresina pide peso`);
     await elegir('na');
+
+    // 1b. La dosis empieza vacía y no se muestra ningún ritmo hasta escribirla
+    await p.fill('#weight', '70'); await p.click('#go');
+    comprobar(await p.inputValue('#value') === '', `${tema}: la dosis no empieza vacía`);
+    comprobar(await p.$('#result .big') === null, `${tema}: se muestra un resultado sin haber escrito la dosis`);
+    await volver();
 
     // 2. Valores de referencia a 70 kg, sin desplazamiento horizontal
     await p.fill('#weight', '70');
@@ -101,6 +107,21 @@ function comprobar(ok, texto) { comprobaciones++; if (!ok) fallos.push(texto); }
       await p.fill('#weight', '160'); await p.click('#go');
       comprobar(await p.$$eval('#result .status.bad', e => e.some(x => x.textContent.includes('Peso de 160 kg'))), 'peso 160 kg: falta el aviso rojo en el resultado');
       await volver(); await p.fill('#weight', '70');
+      // 6b. Al cambiar de fármaco se vuelve a «Dosis → ml/h»; si solo se cambia el peso, el modo se conserva
+      await elegir('na'); await p.click('#go'); await p.click('#m-rate'); await volver();
+      await p.fill('#weight', '80'); await p.click('#go');
+      comprobar(await p.getAttribute('#m-rate', 'aria-pressed') === 'true', 'el modo cambia sin haber cambiado de fármaco');
+      await volver(); await elegir('adr'); await p.click('#go');
+      comprobar(await p.getAttribute('#m-dose', 'aria-pressed') === 'true', 'al cambiar de fármaco no se vuelve a «Dosis → ml/h»');
+      comprobar(await p.$eval('#result .k', e => e.textContent) === 'Programar la bomba a', 'al cambiar de fármaco el resultado no es un ritmo en ml/h');
+      // 6c. Las filas de la tabla se pueden usar con el teclado
+      await p.focus('#table tbody tr:nth-child(4)'); await p.keyboard.press('Enter');
+      comprobar(await p.inputValue('#value') === '0,1' && await cifra() === '12', 'la fila de la tabla no responde al teclado');
+      await volver(); await p.fill('#weight', '70'); await elegir('na');
+      // 6d. Botones y filas con al menos 44 px de alto para el dedo
+      await p.click('#go');
+      comprobar(await p.$$eval('#back, #table tbody tr, .tabs button', e => e.every(x => x.getBoundingClientRect().height >= 44)), 'hay botones o filas de menos de 44 px de alto');
+      await volver();
       // 7. «Cambiar» vuelve a la primera pantalla al primer toque aunque la dirección lleve #calculo
       const q = await ctx.newPage();
       await q.goto(URL_APP + '#calculo'); await q.fill('#weight', '70'); await q.click('#go'); await q.click('#back');
