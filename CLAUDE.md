@@ -4,8 +4,9 @@ Calculadora web de perfusiones de vasoactivos (ml/h) que acompaña al protocolo 
 
 ## Estructura
 
-- `index.html`: toda la app (HTML, CSS y JS en un solo archivo, sin dependencias ni build). Debe seguir siendo un único archivo autocontenido, usable en iPhone/iPad.
+- `index.html`: toda la app (HTML, CSS, JS y la tipografía Archivo incrustada en un solo archivo, sin dependencias, sin peticiones a servidores externos y sin build). Debe seguir siendo un único archivo autocontenido, usable en iPhone/iPad.
 - Los fármacos, diluciones, rangos y avisos están en el array `DRUGS`; las fórmulas en `doseToRate` y `rateToDose`.
+- `tests/pruebas.js`: prueba automática (valores de referencia, avisos, peso y vista móvil). GitHub la ejecuta en cada PR con `.github/workflows/pruebas.yml`. No forma parte de la app.
 - Se publica con GitHub Pages desde `main`: https://juanja9.github.io/calculadora-perfusiones/
 
 ## Seguridad clínica (obligatorio)
@@ -23,7 +24,9 @@ Calculadora web de perfusiones de vasoactivos (ml/h) que acompaña al protocolo 
 
 ## Cómo probar antes de dar un cambio por terminado
 
-1. Tabla de 70 kg con las diluciones por defecto; debe dar: NA 0,1 µg/kg/min → 4,2 ml/h; VP 0,03 UI/min → 2,25 ml/h; ADR 0,1 µg/kg/min → 10,5 ml/h; AT-II 20 ng/kg/min → 8,4 ml/h; AM 1 mg/kg/h → 70 ml/h; DOB 5 µg/kg/min → 4,2 ml/h.
+Ejecuta `node tests/pruebas.js` (necesita Playwright) y comprueba que el PR queda en verde. Si cambia un valor de referencia aprobado por el autor, actualiza también la prueba. La prueba cubre:
+
+1. El peso empieza vacío y «Calcular» queda bloqueado hasta escribirlo (salvo vasopresina, que no depende del peso). Tabla de 70 kg con las diluciones por defecto; debe dar: NA 0,1 µg/kg/min → 4,2 ml/h; VP 0,03 UI/min → 2,25 ml/h; ADR 0,1 µg/kg/min → 10,5 ml/h; AT-II 20 ng/kg/min → 8,4 ml/h; AM 1 mg/kg/h → 70 ml/h; DOB 5 µg/kg/min → 4,2 ml/h.
 2. Avisos: NA/ADR ámbar > 0,5 y rojo > 1 µg/kg/min; peso > 150 kg aviso rojo, > 200 kg bloquea.
 3. Vista móvil a 390 px sin desplazamiento horizontal, en modo claro y oscuro.
 
